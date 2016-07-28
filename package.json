@@ -10,6 +10,11 @@
   "author": "Abiee Echamea",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0"
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "cors": "^2.7.1",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "serve-static": "^1.11.1"
   }
 }
