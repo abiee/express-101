@@ -15,8 +15,10 @@ try {
   config = require('./config');
 } catch(error) {
   config = require('./config.sample');
+  /* eslint-disable */
   console.log('Using sample configuration, please write your own ' +
     'configuration in config.json file');
+  /* eslint-enable */
 }
 
 var app = express();
@@ -29,19 +31,19 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 // Parse to json requests with application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 // Compress all responses
 app.use(compression());
 
 // Enable CORS for any origin
-app.use(cors())
+app.use(cors());
 
 // Serve public assets
 app.use(serveStatic('app', { index: ['index.html', 'index.htm'] }));
 
 var logger = new winston.Logger({
-  level: config.logLevel || "info",
+  level: config.logLevel || 'info',
   transports: [
     new (winston.transports.Console)()
   ]
@@ -58,11 +60,11 @@ app.use((req, res, next) => {
     if (error) {
       req.logger.error(error);
       res.status(500).json({
-        error: "Unable to access to database"
+        error: 'Unable to access to database'
       });
     } else {
       req.db = db;
-      next()
+      next();
     }
   });
 });
@@ -75,5 +77,7 @@ app.get('/hello/:name', (req, res) => {
 });
 
 http.createServer(app).listen(3000, () => {
+  /* eslint-disable */
   console.log('Express server started!');
+  /* eslint-enable */
 });
