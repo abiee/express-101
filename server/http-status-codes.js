@@ -1,0 +1,9 @@
+'use strict';
+
+module.exports = {
+  HTTP_OK: 202,
+  HTTP_CREATED: 201,
+  HTTP_UNAUTHORIZED: 401,
+  HTTP_DUPLICATED: 409,
+  HTTP_INTERNAL_SERVER_ERROR: 500
+}
