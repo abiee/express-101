@@ -30,6 +30,7 @@ usersRouter.post('/signup', (req, res) => {
         res.status(httpCode.HTTP_BAD_REQUEST)
           .json({ message: error.message });
       } else {
+        req.logger.error(error);
         res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
           .json({ message: "Unexpected error" });
       }
@@ -53,6 +54,7 @@ usersRouter.post('/login', (req, res) => {
         res.status(httpCode.HTTP_UNAUTHORIZED)
           .json({ message: 'Invalid user and password combination' });
       } else {
+        req.logger.error(error);
         res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
           .json({ message: "Unexpected error" });
       }

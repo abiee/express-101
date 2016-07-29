@@ -7,12 +7,13 @@ var cors = require('cors');
 var morgan = require('morgan');
 var serveStatic = require('serve-static');
 var http = require('http');
+var winston = require('winston');
 
 var config = {};
 
 try {
   config = require('./config');
-} catch(err){
+} catch(error) {
   config = require('./config.sample');
   console.log('Using sample configuration, please write your own ' +
     'configuration in config.json file');
@@ -39,12 +40,26 @@ app.use(cors())
 // Serve public assets
 app.use(serveStatic('app', { index: ['index.html', 'index.htm'] }));
 
+var logger = new winston.Logger({
+  level: config.logLevel || "info",
+  transports: [
+    new (winston.transports.Console)()
+  ]
+});
+app.use((req, res, next) => {
+  req.logger = logger;
+  next();
+});
+
 app.use((req, res, next) => {
   var connect = require('./server/database');
 
-  connect(config.database, (err, db) => {
-    if (err) {
-      next(err);
+  connect(config.database, (error, db) => {
+    if (error) {
+      req.logger.error(error);
+      res.status(500).json({
+        error: "Unable to access to database"
+      });
     } else {
       req.db = db;
       next()

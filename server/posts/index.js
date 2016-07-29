@@ -26,6 +26,7 @@ postsRouter.post('/', (req, res) => {
         res.status(httpCode.HTTP_BAD_REQUEST)
           .json({ message: error.message });
       } else {
+        req.logger.error(error);
         res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
           .json({ message: "Unexpected error" });
       }
@@ -46,6 +47,7 @@ postsRouter.get('/', (req, res) => {
 
   listPosts(database, page, (error, posts) => {
     if (error) {
+      req.logger.error(error);
       return res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
         .json({ message: "Unexpected error" });
     }
