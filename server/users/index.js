@@ -1,12 +1,9 @@
 'use strict';
 
 var express = require('express');
+var authRequired = require('../auth-middleware');
 var httpCode = require('../http-status-codes');
 var usersRouter = express.Router();
-
-usersRouter.get('/:userId', (req, res) => {
-  res.json({ foo: 'bar' });
-});
 
 usersRouter.post('/signup', (req, res) => {
   const signup = require('./signup');
@@ -23,7 +20,7 @@ usersRouter.post('/signup', (req, res) => {
           .json({ message: "Unexpected error" });
       }
 
-      return
+      return;
     }
 
     res.status(httpCode.HTTP_CREATED)
@@ -36,7 +33,7 @@ usersRouter.post('/login', (req, res) => {
   const loginData = req.body;
   const database = req.db;
 
-  login(database, loginData, (error, user) => {
+  login(database, loginData, (error, user, token) => {
     if (error) {
       if (error.name === 'PASSWORD_NOT_MATCH' || error.name == 'DOES_NOT_EXISTS') {
         res.status(httpCode.HTTP_UNAUTHORIZED)
@@ -46,12 +43,19 @@ usersRouter.post('/login', (req, res) => {
           .json({ message: "Unexpected error" });
       }
 
-      return
+      return;
     }
 
     res.status(httpCode.HTTP_OK)
-      .json(user);
+      .json({
+        user: user,
+        token: token
+      });
   });
+});
+
+usersRouter.get('/me', authRequired, (req, res) => {
+  res.json(req.user);
 });
 
 module.exports = usersRouter;

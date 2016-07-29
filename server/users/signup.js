@@ -45,7 +45,7 @@ const registerUser = (usersCollection, userData, callback) => {
   usersCollection.insert(userData, (error, result) => {
     if (error) return callback(error, null);
 
-    var user = result.ops[0];
+    let user = result.ops[0];
     callback(null, user);
   });
 };

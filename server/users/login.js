@@ -1,5 +1,7 @@
 'use strict';
 
+var tokens = require('../tokens');
+
 class PasswordNotMatch extends Error {
   constructor() {
     var message = `Password not match`;
@@ -32,7 +34,8 @@ module.exports = (database, loginData, callback) => {
       return callback(new PasswordNotMatch(), null);
     }
 
-    callback(null, user);
+    var token = tokens.issueToken(user);
+    callback(null, user, token);
   });
 };
 
