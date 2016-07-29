@@ -16,6 +16,7 @@
     "cors": "^2.7.1",
     "crispy-string": "0.0.2",
     "express": "^4.14.0",
+    "joi": "^9.0.4",
     "mongodb": "^2.2.5",
     "morgan": "^1.7.0",
     "serve-static": "^1.11.1"

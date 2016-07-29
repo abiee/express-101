@@ -1,8 +1,15 @@
 'use strict';
 
+var async = require('async');
 var express = require('express');
+var Joi = require('joi');
 var httpCode = require('../http-status-codes');
 var postsRouter = express.Router();
+
+const postSchema = Joi.object().keys({
+  title: Joi.string().min(3).max(30).required(),
+  body: Joi.string().required()
+});
 
 postsRouter.post('/', (req, res) => {
   const createPost = require('./create-post');
@@ -10,10 +17,20 @@ postsRouter.post('/', (req, res) => {
   const database = req.db;
   const user = req.user;
 
-  createPost(database, postData, user._id, (error, post) => {
+  async.waterfall([
+    (callback) => Joi.validate(postData, postSchema, callback),
+    (postData, callback) => createPost(database, postData, user._id, callback)
+  ], (error, post) => {
     if (error) {
-      return res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
-        .json({ message: "Unexpected error" });
+      if(error.name === 'ValidationError') {
+        res.status(httpCode.HTTP_BAD_REQUEST)
+          .json({ message: error.message });
+      } else {
+        res.status(httpCode.HTTP_INTERNAL_SERVER_ERROR)
+          .json({ message: "Unexpected error" });
+      }
+
+      return;
     }
 
     res.status(httpCode.HTTP_CREATED)
